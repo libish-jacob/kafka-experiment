@@ -25,7 +25,7 @@ namespace KafkaClient
         {
             var config = new ConsumerConfig
             {
-                // two brokers on two different ports are running on localhost.
+                // two brokers on two different ports are running on localhost. BootstrapServers are used only to find the full cluster setup. So select some random brokers which are up and running.
                 BootstrapServers = "localhost:9092,localhost:9192",
                 GroupId = "foo",
                 AutoOffsetReset = AutoOffsetReset.Earliest
