@@ -33,8 +33,9 @@ namespace KafkaClient
 
             using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
             {
+                // make sure to subscribe before consuming.
                 consumer.Subscribe(new List<string>() { "testotherdata" });
-                var count = 5;
+                var count = 50;
                 while (count > 0)
                 {
                     var res = consumer.Consume(50000);
