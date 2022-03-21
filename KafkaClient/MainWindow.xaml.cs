@@ -18,7 +18,6 @@ namespace KafkaClient
 
             Task.Factory.StartNew(() => Receive());
             Task.Factory.StartNew(()=>Send());
-
         }
 
         private void Receive()
