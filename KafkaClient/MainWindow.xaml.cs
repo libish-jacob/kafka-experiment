@@ -17,17 +17,18 @@ namespace KafkaClient
             InitializeComponent();
 
             Task.Factory.StartNew(() => Receive());
-            Task.Factory.StartNew(()=>Send());
+            Task.Factory.StartNew(()=>Send());            
         }
 
         private void Receive()
         {
             var config = new ConsumerConfig
-            {
+            {    
                 // two brokers on two different ports are running on localhost. BootstrapServers are used only to find the full cluster setup. So select some random brokers which are up and running.
                 BootstrapServers = "localhost:9092,localhost:9192",
-                GroupId = "foo",
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                GroupId = "foo2",
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                
             };
 
             using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
@@ -49,16 +50,17 @@ namespace KafkaClient
             var config = new ProducerConfig
             {
                 BootstrapServers = "localhost:9092,localhost:9192",
-                ClientId = Dns.GetHostName(),
+                ClientId = Dns.GetHostName()                
             };
 
 
-            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            using (var producer = new ProducerBuilder<int, KafkaMessage>(config).Build())
             {
                 var count = 5;
                 while (count > 0)
                 {
-                    var tsk = await producer.ProduceAsync("testotherdata", new Message<Null, string>() { Value = $"message {Guid.NewGuid()}" });
+                    var message = new Message<int, KafkaMessage>() { Key= Random.Shared.Next(), Value = new KafkaMessage() { Id = Guid.NewGuid(), Name = "Test" } };
+                    var tsk = await producer.ProduceAsync("testotherdata", message);
                     if (tsk.Status == PersistenceStatus.Persisted)
                     {
                         Console.WriteLine("Sent!");
